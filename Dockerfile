@@ -10,5 +10,5 @@ COPY . /app
 CMD [ "npm", "run", "deploy" ]
 
 FROM nginx
-COPY --from=0 /app/web /app
+COPY --from=0 /app /app
 COPY --from=0 /app/nginx.conf /etc/nginx/nginx.conf
