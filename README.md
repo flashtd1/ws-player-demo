@@ -17,14 +17,9 @@ npm install
 npm run server
 ```
 
-
-### 客户端
-* 新建一个终端
-* 在项目目录终端执行
-```
-npm run client
-```
-
 ### 端口修改
 * 在server.js中修改port变量为需要的端口
 * 在web目录下的index.html中，修改script部分的port为服务器的设置的端口，端口一致才能通信
+
+### 其他说明
+* audio标签中的controls是为了方便查看状态，使用的时候，点下方的播放按钮来通知音乐播放

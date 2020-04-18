@@ -1,9 +1,15 @@
-const io = require('socket.io')()
+const Koa = require('koa')
+const app = new Koa()
+const server = require('http').createServer(app.callback())
+const io = require('socket.io')(server)
+const serve = require('koa-static')
+app.use(serve('web'))
 
-const port = 3000       // 服务器运行的端口号
+const port = 8085       // 服务器运行的端口号
 let clients = {}        // 所有在线的客户端列表
 let currentHost = null  // 当前的主唱，主唱的时间是其他所有人的时间参考
 let currentTime = 0     // 当前音乐播放的时间
+
 
 // 有客户端连接
 io.on('connection', client => {
@@ -137,5 +143,5 @@ const updateTime = (state) => {
     })
 }
 
-io.listen(port)
+server.listen(port)
 console.log(`服务器运行在http://localhost:${port}`)
