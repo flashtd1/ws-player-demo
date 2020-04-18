@@ -28,7 +28,7 @@
 var port = 8085 // 端口号，和服务器保持一致才能通信
 var friends = []
 var singing = false
-var socket = io('http://localhost:' + port)
+var socket = io('//:' + port)
 
 socket.on('connect', function() {
     console.log('连接')
