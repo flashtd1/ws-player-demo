@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+<body>
+    <div>
+        我的名字是：<input id="name" /> 
+        <button onclick="rename()">设置</button>
+    </div>
+    <div>
+        在线列表
+        <ul id="clients">
+
+        </ul>
+    </div>
+    <div>
+        <audio id="audio" src="assets/opening.mp3" controls></audio>
+    </div>
+    <div>
+        <button onclick="play(event)">播放</button>
+    </div>
+</body>
+<script src="js/socket.io.js"></script>
+<script>
+var port = 3000 // 端口号，和服务器保持一致才能通信
+var friends = []
+var singing = false
+var socket = io('http://localhost:' + port)
+
+socket.on('connect', function() {
+    console.log('连接')
+})
+
+socket.on('broadcast', function(data) {
+    switch(data.name) {
+        case 'updatelist':
+            console.log('人数发生了变化', data.content)
+            updateclients(data.content)
+            break
+        case 'updateTime':
+            
+            if (isHost()) {
+               console.log('我是主唱')
+                if (data.content.hasOtherSinger) {
+                    console.log('不静音')
+                    audio.muted = false
+                } else {
+                    console.log('静音')
+                    audio.muted = true
+                }
+            } else {
+                if (data.content.state === 'play') {
+                    if (audio.paused) {
+                        audio.currentTime = data.content.time
+                        audio.muted = false
+                        audio.play()
+                    }
+                } else {
+                    if (!audio.paused) {
+                        audio.pause()
+                    }
+                }
+            }
+            break
+        default:
+            console.log('收到一个广播', data)
+            break
+
+    }
+})
+
+socket.on('disconnect', function() {
+    console.log('掉线了！')
+})
+
+function rename() {
+    var nameInput = document.querySelector('#name')
+    socket.emit('event', {
+        name: 'rename',
+        content: nameInput.value
+    })
+}
+
+function updateclients(newClients) {
+    friends = newClients
+    var clients = document.querySelector('#clients')
+    clients.innerHTML = ''
+    for (var i = 0; i < newClients.length; i++) {
+        var client = document.createElement('li')
+        client.innerText = newClients[i].name + (newClients[i].singing ? '-在唱歌' : '-没干啥') + (newClients[i].isHost ? '-是主唱': '-是副唱')
+        clients.appendChild(client)
+    }
+}
+
+
+function isHost() {
+    if (friends.findIndex((f) => {
+        return f.isHost && f.id === socket.id
+    }) > -1) {
+        return true
+    } else {
+        return false
+    }
+}
+
+function play(e) {
+    singing = !singing
+    e.target.innerText = singing ? '暂停' : '播放'
+    if (singing) {
+        audio.play()
+        socket.emit('event', {
+            name: 'sing',
+            content: singing
+        })
+    } else {
+        audio.pause()
+        socket.emit('event', {
+            name: 'sing',
+            content: singing
+        })
+    }
+}
+
+var audio = document.querySelector('#audio')
+audio.ontimeupdate = function (e) {
+    console.log('当前时间:', audio.currentTime)
+    if (isHost()) {
+        socket.emit('event', {
+            name: 'updatetime',
+            content: {
+                time: audio.currentTime
+            }
+        })
+    }
+}
+
+</script>
+</html>
