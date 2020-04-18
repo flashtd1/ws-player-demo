@@ -23,3 +23,4 @@ npm run server
 
 ### 其他说明
 * audio标签中的controls是为了方便查看状态，使用的时候，点下方的播放按钮来通知音乐播放
+* 由于audio标签在chrome中属于即将废弃的标签，所以只能在edge、IE10以上，Firefox等浏览器中运行，chrome浏览器在播放之后进入不会跳转到最新的时间
