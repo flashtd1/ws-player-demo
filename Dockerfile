@@ -6,7 +6,6 @@ COPY package.json /app/
 WORKDIR /app
 RUN npm install
 COPY . /app
-RUN npm run build
 
 FROM nginx
 COPY --from=0 /app/web /app
