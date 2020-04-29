@@ -15,10 +15,10 @@ let currentTime = 0
 
 io.on('connection', client => {
     //console.log(client)
-    const welcomeMessage = `欢迎${client.id}进入`
+    const welcomeMessage = `welcome: ${client.id}`
     console.log(welcomeMessage)
     Object.assign(client, {
-        name: '未知',
+        name: 'Unknown',
         singing: false
     })
 
@@ -54,19 +54,19 @@ io.on('connection', client => {
                 break
             case 'updatetime': 
                 if (currentHost && currentHost.id === client.id) {
-                    console.log('主唱更新时间', data.content)
+                    console.log('main singer update time', data.content)
                     currentTime = data.content.time
                     updateTime(currentHost.singing ? 'play' : 'pause')
                 }
                 break
             default: 
-                console.log(`${client.id}对我说：${data.content}`)
+                console.log(`${client.id} says：${data.content}`)
                 break
         }
     })
 
     client.on('disconnect', () => {
-        console.log(`${client.id}掉线了`)
+        console.log(`${client.id} off line`)
         
         delete clients[client.id]
         if(currentHost && client.id === currentHost.id) {
@@ -123,4 +123,4 @@ const updateTime = (state) => {
 }
 
 server.listen(port)
-console.log(`服务器运行在http://localhost:${port}`)
+console.log(`server run on http://localhost:${port}`)

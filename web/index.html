@@ -3,24 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <title>HEAR'N SCREENS</title>
+    <link type="text/css" rel="stylesheet" href="css/index.css"/>
 </head>
 <body>
-    <div>
-        我的名字是：<input id="name" /> 
-        <button onclick="rename()">设置</button>
+    <div class="title">
+        <img src="assets/title.png" height="23"/>
+    </div>
+    <div class="body">
+        <div class="input-label">Name</div>
+        <input class="input" id="name" />
+        <div>
+            <button class="submit-btn" onclick="rename()"></button>
+        </div>
+        <div>
+            <ul class="player-list" id="clients"></ul>
+        </div>
+    </div>
+    <div class="footer">
+        <button class="play-btn" onclick="play(event)"></button>
+        <div class="note">Note: By clicking the play button, you are not playing to yourself, but playing to others.</div>
     </div>
     <div>
-        在线列表
-        <ul id="clients">
-
-        </ul>
-    </div>
-    <div>
-        <audio id="audio" src="assets/opening.mp3" controls></audio>
-    </div>
-    <div>
-        <button onclick="play(event)">播放</button>
+        <audio id="audio" src="assets/psyco two track_1_1_1.mp3"></audio>
     </div>
 </body>
 <script src="js/socket.io.js"></script>
@@ -90,7 +95,7 @@ function updateclients(newClients) {
     clients.innerHTML = ''
     for (var i = 0; i < newClients.length; i++) {
         var client = document.createElement('li')
-        client.innerText = newClients[i].name + (newClients[i].singing ? '-在唱歌' : '-没干啥') + (newClients[i].isHost ? '-是主唱': '-是副唱')
+        client.innerText = newClients[i].name // + (newClients[i].singing ? '-在唱歌' : '-没干啥') + (newClients[i].isHost ? '-是主唱': '-是副唱')
         clients.appendChild(client)
     }
 }
@@ -108,7 +113,8 @@ function isHost() {
 
 function play(e) {
     singing = !singing
-    e.target.innerText = singing ? '暂停' : '播放'
+    // e.target.innerText = singing ? '暂停' : '播放'
+    e.target.className = singing ? 'stop-btn' : 'play-btn'
     if (singing) {
         audio.play()
         socket.emit('event', {
